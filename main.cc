@@ -68,7 +68,7 @@ int main( int argc, char *argv[ ] )
     }
   }
 
-  float total_volume = total_height * fullTileArea;
+  float total_volume = total_height * fullTileArea * 2.0;
 
   std::cout << total_volume << std::endl;
 
