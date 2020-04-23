@@ -1,0 +1,26 @@
+# Azure Pipeline
+
+trigger:
+- master
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+- script: |
+    cmake CMakeLists.txt
+    cmake --build .
+  displayName: 'Building...'
+
+- script: lscpu
+  displayName: 'CPU Info...'
+
+- script: |
+    ./MonteCarlo
+    ./MonteCarlo 1000
+    ./MonteCarlo 8 1000
+    ./MonteCarlo 8 1000 -s
+  displayName: 'Running binary...'
+
+- publish: $(System.DefaultWorkingDirectory)/records.csv
+  artifact: records.csv
