@@ -1,0 +1,15 @@
+/xcode/
+/build/
+/builds/
+/build-*/
+/_build/
+.DS_Store
+CMakeCache.txt
+Makefile
+CMakeFiles/
+Superquad
+*.o
+cmake_install.cmake
+
+
+
