@@ -16,10 +16,11 @@ steps:
   displayName: 'CPU Info...'
 
 - script: |
-    ./MonteCarlo
-    ./MonteCarlo 1000
-    ./MonteCarlo 8 1000
-    ./MonteCarlo 8 1000 -s
+    ./Superquad
+    ./Superquad 4
+    ./Superquad 8 1000
+    ./Superquad 8 1000 output.csv
+    ./Superquad 8 1000 -vol just_volumes.csv
   displayName: 'Running binary...'
 
 - publish: $(System.DefaultWorkingDirectory)/records.csv
