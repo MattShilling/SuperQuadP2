@@ -22,21 +22,19 @@
 #define YMIN -1.0
 #define YMAX 1.0
 
-double CalcSpeedup(double test_two, double test_one) {
-  return test_two / test_one;
-}
-
-float CalcFp(double speedup, double threads) {
-  return (threads / (threads - 1.0)) * (1. - (1. / speedup));
-}
-
+// Helper functions
+double CalcSpeedup(double test_two, double test_one);
+float CalcFp(double speedup, double threads);
 float Height(int, int, int);
 
+// Basic struct to conduct some tests.
 struct test_mem {
   int numnodes;
   float volume;
 };
 
+// Function to calculate volume of a superquadratic.
+// TODO(matts): Allow for different powers (N=?).
 void calc_superquad(std::shared_ptr<void> mem) {
 
   // Get the number of nodes to be used from memory
@@ -72,7 +70,8 @@ void calc_superquad(std::shared_ptr<void> mem) {
         weight = 1.0;
       }
 
-      total_height += Height(iu, iv, numnodes);
+      // Apparently the weight is optional?
+      total_height += weight * Height(iu, iv, numnodes);
     }
   }
 
@@ -110,18 +109,21 @@ int main(int argc, char *argv[]) {
     }
   }
 
+  // Set up test memory and initialize our test rig to test `calc_superquad`.
+  // NOTE: we don't need an initializer function for this test rig so pass in a
+  // blank std::function.
   std::shared_ptr<test_mem> mem = std::make_shared<test_mem>();
-
   mem->numnodes = numnodes;
-
   TestRig superquad(mem, calc_superquad,
                     std::function<void(std::shared_ptr<void> mem)>());
 
-  std::cout << 1.00 / 32768.00 << std::endl;
-
+  // Initialize test with set number of threads and run.
   superquad.Init(threads);
+  // We are passing in numnodes^2 because that is how many total for loop passes
+  // we are doing.
   superquad.Run(static_cast<double>(numnodes * numnodes));
 
+  // If we want to record some statistics.
   if (!file.empty()) {
     float superquad_two = 0.0;
     float superquad_one = 0.0;
@@ -173,6 +175,8 @@ int main(int argc, char *argv[]) {
 // iu,iv = 0 .. NUMNODES-1
 float Height(int iu, int iv, int numnodes) {
 
+  // Played around with setting to a double but was not able to solve the
+  // `diminishing volume` as numnodes increased.
   double x = -1.00 + 2.00 * ((double)iu / (double)(numnodes - 1)); // -1. to +1.
   double y = -1.00 + 2.00 * ((double)iv / (double)(numnodes - 1)); // -1. to +1.
 
@@ -183,4 +187,12 @@ float Height(int iu, int iv, int numnodes) {
     return 0.00;
   float height = pow(r, 1.00 / (float)N);
   return height;
+}
+
+double CalcSpeedup(double test_two, double test_one) {
+  return test_two / test_one;
+}
+
+float CalcFp(double speedup, double threads) {
+  return (threads / (threads - 1.0)) * (1. - (1. / speedup));
 }
