@@ -12,7 +12,9 @@ void TestRig::Init(int num_threads) {
     fprintf(stderr, "Using %d threads\n", num_threads);
 
     // Initialize test memory.
-    test_init_(mem_);
+    if(test_init_) {
+      test_init_(mem_);
+    }
 
     // Clear our records.
     mega_mults_.clear();
