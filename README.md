@@ -1,5 +1,7 @@
 # SuperQuadP2
 
+Calculating the volume of a superquadric using multithreading.
+
 # Requirements
 - OpenMP
 
